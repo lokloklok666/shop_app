@@ -1,44 +1,53 @@
 <template>
     <div>
-        <el-col :span="12">
-            <el-menu default-active="2"
-                     class="el-menu-vertical-demo el-menu"
-                     background-color="#545c64"
-                     text-color="#fff"
-                     active-text-color="#ffd04b"
+        <el-col :span="24">
+            <el-menu :default-active="'1'"
+                     class="el-menu-vertical-demo menu-width"
                      @open="handleOpen"
-                     @close="handleClose">
-                <el-submenu index="1">
-                    <template slot="title">
-                        <i class="el-icon-location"></i>
-                        <span>导航一</span>
+                     @close="handleClose"
+                     @select="handleSelect"
+                     unique-opened
+                     router>
+                <template v-for="titleItem in navData">
+                    <!-- 一级 :index="titleItem.titleIndex.toString()"-->
+                    <template v-if="titleItem.titleType === 'primary'">
+                        <el-menu-item :index="titleItem.titleIndex.toString()"
+                                      :key="titleItem.titleIndex"
+                                      class="menuItem-text-left">
+                            <i :class="titleItem.titleIcon"></i>
+                            <span slot="title">{{titleItem.titleName}}:{{titleItem.titleIndex}}:{{titleItem.items.length}}</span>
+                        </el-menu-item>
                     </template>
-                    <el-menu-item-group>
-                        <template slot="title">分组一</template>
-                        <el-menu-item index="1-1">选项1</el-menu-item>
-                        <el-menu-item index="1-2">选项2</el-menu-item>
-                    </el-menu-item-group>
-                    <el-menu-item-group title="分组2">
-                        <el-menu-item index="1-3">选项3</el-menu-item>
-                    </el-menu-item-group>
-                    <el-submenu index="1-4">
-                        <template slot="title">选项4</template>
-                        <el-menu-item index="1-4-1">选项1</el-menu-item>
-                    </el-submenu>
-                </el-submenu>
-                <el-menu-item index="2">
-                    <i class="el-icon-menu"></i>
-                    <span slot="title">导航二</span>
-                </el-menu-item>
-                <el-menu-item index="3"
-                              disabled>
-                    <i class="el-icon-document"></i>
-                    <span slot="title">导航三</span>
-                </el-menu-item>
-                <el-menu-item index="4">
-                    <i class="el-icon-setting"></i>
-                    <span slot="title">导航四</span>
-                </el-menu-item>
+                    <!-- 一级 -->
+                    <template v-else-if="titleItem.titleType === 'sub'">
+                        <template v-if="titleItem.items.length > 0">
+                            <!-- 二级 -->
+                            <el-submenu :index="titleItem.titleIndex.toString()"
+                                        :key="titleItem.titleIndex"
+                                        class="menuItem-text-left">
+                                <template slot="title">
+                                    <i :class="titleItem.titleIcon"></i>
+                                    <span>{{titleItem.titleName}}:{{titleItem.titleIndex}}:{{titleItem.items.length}}</span>
+                                </template>
+                                <template v-for="(subItem,index) in titleItem.items">
+                                    <el-menu-item-group :key="index">
+                                        <template slot="title">分组{{index + 1}}</template>
+                                        <el-menu-item :index="titleItem.titleIndex.toString() + '-' + subItem.subIndex.toString()">{{subItem.subTitleName}}</el-menu-item>
+                                    </el-menu-item-group>
+                                </template>
+                            </el-submenu>
+                        </template>
+                        <!-- 一级 -->
+                        <template v-else>
+                            <el-menu-item :index="titleItem.titleIndex.toString()"
+                                          :key="titleItem.titleIndex"
+                                          class="menuItem-text-left">
+                                <i :class="titleItem.titleIcon"></i>
+                                <span slot="title">{{titleItem.titleName}}:{{titleItem.titleIndex}}:{{titleItem.items.length}}</span>
+                            </el-menu-item>
+                        </template>
+                    </template>
+                </template>
             </el-menu>
         </el-col>
     </div>
@@ -47,22 +56,91 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+        navData: [
+            {
+                titleIndex: 1,
+                titleIcon: 'el-icon-s-home',
+                titleName: '首页',
+                titleType: 'primary',
+                router: '',
+                items: []
+            },{
+                titleIndex: 2,
+                titleIcon: 'el-icon-s-grid',
+                titleName: '商品管理',
+                titleType: 'sub',
+                router: '',
+                items: [
+                    {
+                        subIndex:1,
+                        subTitleName:'项1',
+                    },{
+                        subIndex:2,
+                        subTitleName:'项2',
+                    }
+                ]
+            },{
+                titleIndex: 3,
+                titleIcon: 'el-icon-s-custom',
+                titleName: '会员管理',
+                titleType: 'sub',
+                router: '',
+                items: []
+            },{
+                titleIndex: 4,
+                titleIcon: 'el-icon-s-management',
+                titleName: '销售管理',
+                titleType: 'sub',
+                router: '',
+                items: [
+                    {
+                        subIndex:1,
+                        subTitleName:'项1',
+                    },{
+                        subIndex:2,
+                        subTitleName:'项2',
+                    }
+                ]
+            },{
+                titleIndex: 5,
+                titleIcon: 'el-icon-setting',
+                titleName: '权限管理',
+                titleType: 'sub',
+                router: '',
+                items: []
+            },
+        ],
+    };
   },
   methods: {
     handleOpen(key, keyPath) {
-      window.console.log(key, keyPath);
+      window.console.log("open===>",key, keyPath);
     },
     handleClose(key, keyPath) {
-      window.console.log(key, keyPath);
+      window.console.log("close===>",key, keyPath);
+    },
+    handleSelect(key, keyPath) {
+        window.console.log("sel====>",key,keyPath);
     }
+  },
+  computed: {
+      test:function(val) {
+          window.console.log(val);
+          return val.toString();
+      }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.el-menu--collapse .el-menu .el-submenu,
-.el-menu--popup {
-  min-width: 200px;
+.menu-width {
+  width: 200px;
+}
+.title-padding {
+  padding-left: 0px;
+}
+.menuItem-text-left {
+  text-align: left;
 }
 </style>
