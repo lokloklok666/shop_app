@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-col :span="24">
-            <el-menu :default-active="'1'"
+            <el-menu :default-active="defaultActive"
                      class="el-menu-vertical-demo menu-width"
                      @open="handleOpen"
                      @close="handleClose"
@@ -11,7 +11,7 @@
                 <template v-for="titleItem in navData">
                     <!-- 一级 :index="titleItem.titleIndex.toString()"-->
                     <template v-if="titleItem.titleType === 'primary'">
-                        <el-menu-item :index="titleItem.titleIndex.toString()"
+                        <el-menu-item :index="jugTarPath(titleItem.tarPath)?titleItem.tarPath:titleItem.titleIndex.toString()"
                                       :key="titleItem.titleIndex"
                                       class="menuItem-text-left">
                             <i :class="titleItem.titleIcon"></i>
@@ -32,14 +32,14 @@
                                 <template v-for="(subItem,index) in titleItem.items">
                                     <el-menu-item-group :key="index">
                                         <template slot="title">分组{{index + 1}}</template>
-                                        <el-menu-item :index="titleItem.titleIndex.toString() + '-' + subItem.subIndex.toString()">{{subItem.subTitleName}}</el-menu-item>
+                                        <el-menu-item :index="jugTarPath(subItem.tarPath)?subItem.tarPath:(titleItem.titleIndex.toString() + '-' + subItem.subIndex.toString())">{{subItem.subTitleName}}</el-menu-item>
                                     </el-menu-item-group>
                                 </template>
                             </el-submenu>
                         </template>
                         <!-- 一级 -->
                         <template v-else>
-                            <el-menu-item :index="titleItem.titleIndex.toString()"
+                            <el-menu-item :index="jugTarPath(titleItem.tarPath)?titleItem.tarPath:titleItem.titleIndex.toString()"
                                           :key="titleItem.titleIndex"
                                           class="menuItem-text-left">
                                 <i :class="titleItem.titleIcon"></i>
@@ -57,27 +57,30 @@
 export default {
   data() {
     return {
+        defaultActive: '/#',
         navData: [
             {
                 titleIndex: 1,
                 titleIcon: 'el-icon-s-home',
                 titleName: '首页',
                 titleType: 'primary',
-                router: '',
+                tarPath: '/#',
                 items: []
             },{
                 titleIndex: 2,
                 titleIcon: 'el-icon-s-grid',
                 titleName: '商品管理',
                 titleType: 'sub',
-                router: '',
+                tarPath: '/',
                 items: [
                     {
                         subIndex:1,
                         subTitleName:'项1',
+                        tarPath: '项1'
                     },{
                         subIndex:2,
                         subTitleName:'项2',
+                        tarPath: '项2'
                     }
                 ]
             },{
@@ -85,21 +88,23 @@ export default {
                 titleIcon: 'el-icon-s-custom',
                 titleName: '会员管理',
                 titleType: 'sub',
-                router: '',
+                tarPath: 'SellMgr',
                 items: []
             },{
                 titleIndex: 4,
                 titleIcon: 'el-icon-s-management',
                 titleName: '销售管理',
                 titleType: 'sub',
-                router: '',
+                tarPath: '/#',
                 items: [
                     {
                         subIndex:1,
                         subTitleName:'项1',
+                        tarPath: '/',
                     },{
                         subIndex:2,
                         subTitleName:'项2',
+                        tarPath: '/',
                     }
                 ]
             },{
@@ -107,7 +112,7 @@ export default {
                 titleIcon: 'el-icon-setting',
                 titleName: '权限管理',
                 titleType: 'sub',
-                router: '',
+                tarPath: 'GrantMgr',
                 items: []
             },
         ],
@@ -122,14 +127,14 @@ export default {
     },
     handleSelect(key, keyPath) {
         window.console.log("sel====>",key,keyPath);
+    },
+    jugTarPath(path) {
+        if(path != '/#' || path.replace(/\s+/g,'') != '') return true
+        return false;
     }
   },
   computed: {
-      test:function(val) {
-          window.console.log(val);
-          return val.toString();
-      }
-  }
+  },
 };
 </script>
 

@@ -1,25 +1,16 @@
 <template>
     <div>
-        <el-main>
-            <router-view></router-view>
-        </el-main>
+        这是index
     </div>
 </template>
 
 <script>
-
 export default {
     data() {
         return {
-            
+
         }
     },
-    components: {
-
-    },
-    methods: {
-        
-    }
 }
 </script>
 
